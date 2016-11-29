@@ -3,7 +3,7 @@
 const path = require('path')
 const { assert } = require('chai')
 
-const salad = require('../dist/index.js')
+const salad = require('../dist/index.js').default
 
 describe('SALAD', function () {
   it('Should log a yaml schema from file', function(done) {

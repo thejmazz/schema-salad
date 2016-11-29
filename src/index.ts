@@ -5,6 +5,20 @@ const fs = require('fs-promise')
 const yaml = require('js-yaml-promise')
 const debug = require('debug')('schema-salad')
 
+interface Context {
+  $base: string,
+  $namespaces: Object,
+  $schemas: Array<string>,
+  $graph: Array<Object>
+}
+
+interface Document {
+  $base: string,
+  $namespaces: Object,
+  $schemas: Array<string>,
+  $graph: Array<Object>
+}
+
 const load = (input: string | Object) => {
   if (typeof(input) === 'object') {
     return Promise.resolve(input)
@@ -17,14 +31,26 @@ const load = (input: string | Object) => {
   }
 }
 
+export const loadContext = (document: Document) => {
+  const context: Context = {
+    $base: document.$base,
+    $namespaces: document.$namespaces,
+    $schemas: document.$schemas,
+    $graph: document.$graph
+  }
+  console.log('Context: ', context)
+
+  return context
+}
+
 const process = (schema) => (input: string) =>
   load(input)
-    .then((obj) => {
+    .then((document) => {
       console.log('Supposed to process:')
-      console.log(obj)
+      console.log(document)
 
-      const newObj = Object.keys(obj).reduce((acc, key) => {
-        let keyVal = obj[key]
+      const newObj = Object.keys(document).reduce((acc, key) => {
+        let keyVal = document[key]
 
         if (/^\w+:\w+$/.test(key)) {
           console.log('Caught: ', key)
@@ -48,11 +74,13 @@ const process = (schema) => (input: string) =>
 
 const loadSchema = (input: string | Object) =>
   load(input)
-    .then((obj) => {
+    .then((document) => {
       console.log('Received: ')
-      console.log(JSON.stringify(obj, null, 2))
+      console.log(JSON.stringify(document, null, 2))
 
-      return process(obj)
+      loadContext(document)
+
+      return process(document)
     })
 
-module.exports = loadSchema
+export default loadSchema
