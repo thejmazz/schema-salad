@@ -5,13 +5,20 @@ const fs = require('fs-promise')
 const yaml = require('js-yaml-promise')
 const debug = require('debug')('schema-salad')
 
-const load = (filename: string) =>
-  fs.readFile(filename, 'utf8')
-    .then((contents: string) => yaml.safeLoad(contents))
-    .catch(console.error)
+const load = (input: string | Object) => {
+  if (typeof(input) === 'object') {
+    return Promise.resolve(input)
+  }
 
-const process = (schema) => (filename: string) =>
-  load(filename)
+  if (input.indexOf('\n') !== -1) {
+    return yaml.safeLoad(input)
+  } else {
+    return fs.readFile(input).then(contents => yaml.safeLoad(contents))
+  }
+}
+
+const process = (schema) => (input: string) =>
+  load(input)
     .then((obj) => {
       console.log('Supposed to process:')
       console.log(obj)
@@ -39,8 +46,8 @@ const process = (schema) => (filename: string) =>
       return newObj
     })
 
-const loadSchema = (filename: string) =>
-  load(filename)
+const loadSchema = (input: string | Object) =>
+  load(input)
     .then((obj) => {
       console.log('Received: ')
       console.log(JSON.stringify(obj, null, 2))

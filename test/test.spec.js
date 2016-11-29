@@ -6,9 +6,42 @@ const { assert } = require('chai')
 const salad = require('../dist/index.js')
 
 describe('SALAD', function () {
-  it('Should log a yaml thing', function(done) {
+  it('Should log a yaml schema from file', function(done) {
     salad(path.resolve(__dirname, './schema.yaml'))
       .then(() => done())
+      .catch(console.error)
+  })
+
+  it('Should log a yaml schema from string body', function (done) {
+    salad(`
+$namespaces:
+  acid: "http://example.com/acid#"
+
+$graph:
+  - name: ExampleType
+    type: record
+    fields:
+      - name: base
+        type: string
+        jsonldPredicate: "http://example.com/base"
+`.trim()).then(() => done()).catch(console.error)
+})
+
+  it('Should log a schema passed as an object', function(done) {
+    salad({
+      $namespaces: {
+        acid: 'http://example.com/acid#'
+      },
+      $graph: [{
+        name: 'ExampleType',
+        type: 'record',
+        fields: [{
+          name: 'base',
+          type: 'string',
+          jsonldPredicate: 'http://example.com/base'
+        }]
+      }]
+    }).then(() => done())
       .catch(console.error)
   })
 
