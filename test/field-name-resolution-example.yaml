@@ -1,0 +1,5 @@
+base: one
+form:
+  http://example.com/base: two
+  http://example.com/three: three
+"acid:four": four

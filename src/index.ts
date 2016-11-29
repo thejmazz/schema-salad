@@ -7,17 +7,7 @@ const debug = require('debug')('schema-salad')
 
 const load = (filename: string) =>
   fs.readFile(filename, 'utf8')
-    .then((contents: string) => {
-      const ext = path.extname(filename)
-
-      if (ext.match(/\.ya?ml/)) {
-        return yaml.safeLoad(contents)
-      } else if (ext === '.json') {
-        return JSON.parse(contents)
-      } else {
-        throw new Error('Was not a yaml or json document')
-      }
-    })
+    .then((contents: string) => yaml.safeLoad(contents))
     .catch(console.error)
 
 const process = (schema) => (filename: string) =>

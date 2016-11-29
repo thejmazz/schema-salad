@@ -6,12 +6,6 @@ const { assert } = require('chai')
 const salad = require('../dist/index.js')
 
 describe('SALAD', function () {
-  it('Should log a json thing', function(done) {
-    salad(path.resolve(__dirname, './schema.json'))
-      .then(() => done())
-      .catch(console.error)
-  })
-
   it('Should log a yaml thing', function(done) {
     salad(path.resolve(__dirname, './schema.yaml'))
       .then(() => done())
@@ -19,10 +13,10 @@ describe('SALAD', function () {
   })
 
   describe('Field name resolution', function () {
-    it.only('Should replace namespace prefix', function(done) {
+    it('Should replace namespace prefix', function(done) {
       salad(path.resolve(__dirname, './schema.yaml'))
         // .then((process) => console.log(process))
-        .then((process) => process(path.resolve(__dirname, './field-name-resolution-example.json')))
+        .then((process) => process(path.resolve(__dirname, './field-name-resolution-example.yaml')))
         .then((obj) => done(assert.deepEqual(obj, {
           base: 'one',
           form: {
